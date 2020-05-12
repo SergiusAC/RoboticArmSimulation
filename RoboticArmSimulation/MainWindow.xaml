@@ -1,0 +1,119 @@
+﻿<Window x:Class="RoboticArmSimulation.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RoboticArmSimulation"
+        xmlns:models="clr-namespace:RoboticArmSimulation.Models"
+        xmlns:h="http://helix-toolkit.org/wpf"
+        xmlns:controls="clr-namespace:RoboticArmSimulation.Controls"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="950">
+
+    <Window.DataContext>
+        <models:RoboticArm />
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="0.4*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                <TextBlock Text="Tip Position: " FontSize="20" />
+                <TextBlock x:Name="tipPosition" FontSize="20" />
+            </StackPanel>
+
+            <h:HelixViewport3D Grid.Row="1" x:Name="viewport3D">
+                <h:HelixViewport3D.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="Azure" Offset="0"/>
+                        <GradientStop Color="AntiqueWhite" Offset="1"/>
+                    </LinearGradientBrush>
+                </h:HelixViewport3D.Background>
+
+                <h:DefaultLights />
+
+                <ModelVisual3D Content="{Binding Model}" />
+                <ModelVisual3D Content="{Binding TargetPointModel}" />
+
+                <h:GridLinesVisual3D
+                    Fill="Black"
+                    Width="50"
+                    Length="50"
+                    MajorDistance="1"
+                    MinorDistance="1"
+                    Thickness="0.01" />
+            </h:HelixViewport3D>
+        </Grid>
+
+        <ScrollViewer Grid.Column="1">
+            <StackPanel Margin="10" Background="LightGray">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <Border BorderThickness="1" BorderBrush="DarkGray" Padding="5" Grid.Row="0">
+                        <StackPanel>
+                            <TextBlock Text="Links" Margin="0 0 0 10" />
+                            <StackPanel x:Name="linksList" Margin="0 0 0 10"></StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Button 
+                                    Grid.Column="0" 
+                                    Content="Remove Link" 
+                                    Margin="0 0 5 0" 
+                                    x:Name="removeLinkBtn"
+                                    Click="removeLinkBtn_Click"/>
+                                <Button 
+                                    Grid.Column="1" 
+                                    Content="Add Link" 
+                                    Margin="5 0 0 0" 
+                                    x:Name="addLinkBtn"
+                                    Click="addLinkBtn_Click"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <StackPanel Margin="0 5 0 0" Grid.Row="1">
+                        <Button x:Name="createArmBtn" Content="Create" Click="createArmBtn_Click" />
+                    </StackPanel>
+
+                    <Border Margin="0 10 0 0" BorderThickness="1" BorderBrush="DarkGray" Padding="5" Grid.Row="2">
+                        <StackPanel>
+                            <TextBlock Text="Control" Margin="0 0 0 10" />
+                            <StackPanel x:Name="linkControls" Margin="0 0 0 10"></StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Margin="0 5 0 0" Grid.Row="3" BorderThickness="1" BorderBrush="DarkGray" Padding="5">
+                        <StackPanel>
+                            <TextBlock Text="Target Point" />
+                            <controls:TargetEdit x:Name="targetEdit" />
+                            <StackPanel Margin="0 5 0 0" Orientation="Horizontal">
+                                <Button Margin="0 0 5 0" Name="DrawTarget" Content="Draw Target" Click="DrawTarget_Click" />
+                                <Button Name="SearchAngles" Content="Search Angles" Click="SearchAngles_Click" />
+                            </StackPanel>
+                            <StackPanel x:Name="searchedAngles" Margin="0 5 0 0">
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
