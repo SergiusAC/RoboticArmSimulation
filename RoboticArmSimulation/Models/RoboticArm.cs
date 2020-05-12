@@ -83,7 +83,7 @@ namespace RoboticArmSimulation.Models
         public void RenderTarget(Point3D target)
         {
             MeshBuilder builder = new MeshBuilder();
-            builder.AddSphere(target, 0.3);
+            builder.AddSphere(target, 0.6);
 
             Model3DGroup group = new Model3DGroup();
             group.Children.Add(new GeometryModel3D()

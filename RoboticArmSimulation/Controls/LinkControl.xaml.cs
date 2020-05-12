@@ -37,7 +37,7 @@ namespace RoboticArmSimulation.Controls
             DataContext = this;
         }
 
-        private void RaiseValueChangedEvent()
+        public void RaiseValueChangedEvent()
         {
             RoutedEventArgs args = new RoutedEventArgs(ValueChangedEvent);
             args.Source = this;

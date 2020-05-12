@@ -86,7 +86,7 @@ namespace RoboticArmSimulation
             }
 
             var tipPose = RoboticMath.GetPositionVector(RoboticMath.GetTransformMatrix(arm.GetParameters()));
-            tipPosition.Text = tipPose[0] + ", " + tipPose[1] + ", " + tipPose[2];
+            tipPosition.Text = String.Format("{0:0.00}; {1:0.00}; {2:0.00};", tipPose[0], tipPose[1], tipPose[2]);
         }
 
         private void MakeControls()
@@ -122,7 +122,7 @@ namespace RoboticArmSimulation
             arm.Render();
 
             var tipPose = RoboticMath.GetPositionVector(RoboticMath.GetTransformMatrix(arm.GetParameters()));
-            tipPosition.Text = tipPose[0] + ", " + tipPose[1] + ", " + tipPose[2];
+            tipPosition.Text = String.Format("{0:0.00}; {1:0.00}; {2:0.00};", tipPose[0], tipPose[1], tipPose[2]);
         }
 
         private void removeLinkBtn_Click(object sender, RoutedEventArgs e)
@@ -148,7 +148,7 @@ namespace RoboticArmSimulation
         private void SearchAngles_Click(object sender, RoutedEventArgs e)
         {
             double[] target = { targetEdit.PointX, targetEdit.PointY, targetEdit.PointZ };
-            var dht = (DataContext as RoboticArm).GetParameters();
+            var dht = GetMDHParameters();
 
             bool success = false;
             double[] angles = RoboticMath.InverseKinematics(dht, target, ref success);
@@ -174,6 +174,37 @@ namespace RoboticArmSimulation
         {
             var targetPoint = new Point3D(targetEdit.PointX, targetEdit.PointY, targetEdit.PointZ);
             (DataContext as RoboticArm).RenderTarget(targetPoint);
+        }
+
+        private void Animate_Click(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < searchedAngles.Children.Count; i++)
+            {
+                var textBlock = searchedAngles.Children[i] as TextBlock;
+                
+                if (textBlock.Text.Equals("Angles Not Found")) 
+                    break;
+
+                var angle = (int)Math.Round(float.Parse(textBlock.Text.Split(':')[1].Trim()));
+                AnimateJoint(i, angle);
+            }
+        }
+
+        private void AnimateJoint(int linkNumber, int angle)
+        {
+            var link = linkControls.Children[linkNumber] as LinkControl;
+            var shift = angle - link.JointControl.Value;
+            shift /= 50;
+
+            new Action(async () => 
+            {
+                for (int i = 0; i < 50; i++)
+                {
+                    link.JointControl.Value += shift;
+                    await Task.Delay(50);
+                    link.RaiseValueChangedEvent();
+                }
+            }).Invoke();
         }
     }
 }

@@ -110,6 +110,7 @@
                             </StackPanel>
                             <StackPanel x:Name="searchedAngles" Margin="0 5 0 0">
                             </StackPanel>
+                            <Button Name="Animate" Content="Animate" Click="Animate_Click" />
                         </StackPanel>
                     </Border>
                 </Grid>

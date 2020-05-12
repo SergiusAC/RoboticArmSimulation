@@ -68,97 +68,17 @@ namespace RoboticArmSimulation.Kinematics
             var optimizer = new BroydenFletcherGoldfarbShanno(numberOfVariables: dht.Count, function: f, gradient: g);
             
             optimizer.Minimize();
-            success = !(optimizer.Value > 0.01);
+            success = !(optimizer.Value >= 0.01);
 
             return optimizer.Solution;
         }
 
-        private static double Distance(List<MDHParameters> dht, double[] target, double[] angles)
+        public static double Distance(List<MDHParameters> dht, double[] target, double[] angles)
         {
             var currentPose = GetPositionVector(ForwardKinematics(dht, angles.ToList()));
             var result = Norm.Euclidean(target.Subtract(currentPose));
             return result;
         }
-
-        private static double[] DistanceGradient(List<MDHParameters> dht, double[] target, double[] angles)
-        {
-            List<double> gradient = new List<double>();
-            for (int i = 0; i < dht.Count; i++)
-            {
-                gradient.Add(PartialGradient(dht, target, angles, i));
-            }
-            return gradient.ToArray();
-        }
-
-        private static double PartialGradient(List<MDHParameters> dht, double[] target, double[] angles, int index)
-        {
-            double dx = 0.01;
-            double savedAngle = angles[index];
-
-            double fx = Distance(dht, target, angles);
-
-            angles[index] += dx;
-            double dfx = Distance(dht, target, angles);
-
-            double gradient = (dfx - fx) / dx;
-
-            angles[index] = savedAngle;
-            return gradient;
-        }
-
-        /*
-        public static double[] InverseKinematics(List<MDHParameters> dht, double[] target)
-        {
-            int jointsCount = dht.Count;
-            double[] angles = new double[jointsCount];
-            int iterations = 15000;
-            double accuracy = 0.9;
-            double learningRate = 0.000000001;
-
-            if (Distance(dht, target, angles) < accuracy)
-                return angles;
-
-            for (;true;)
-            {
-                for (int jointNum = 0; jointNum < dht.Count; jointNum++)
-                {
-                    double gradient = PartialGradient(dht, target, angles, jointNum);
-                    angles[jointNum] -= learningRate * gradient;
-                }
-
-                if (Distance(dht, target, angles) <= accuracy)
-                    break;
-            }
-
-            return angles;
-        }
-
-        private static double[] DistanceGradient(List<MDHParameters> dht, double[] target, double[] angles)
-        {
-            List<double> gradient = new List<double>();
-            for (int i = 0; i < dht.Count; i++)
-            {
-                gradient.Add(PartialGradient(dht, target, angles, i));
-            }
-            return gradient.ToArray();
-        }
-
-        private static double PartialGradient(List<MDHParameters> dht, double[] target, double[] angles, int index)
-        {
-            double dx = 0.01;
-            double savedAngle = angles[index];
-            
-            double fx = Distance(dht, target, angles);
-            
-            angles[index] += dx;
-            double dfx = Distance(dht, target, angles);
-
-            double gradient = (dfx - fx) / dx;
-            
-            angles[index] = savedAngle;
-            return gradient;
-        }
-        */
 
         public static double[,] GetTransformMatrix(MDHParameters parameters)
         {
